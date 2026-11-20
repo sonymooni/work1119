@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>부산 일자리 질 악화 & 청년 쉬었음 인포그래픽</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    width: 1200px;
+    height: 820px;
+    overflow: hidden;
+    font-family: 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background: #ffffff;
+    color: #1e293b;
+    padding: 30px 36px 24px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 14px;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .badge {
+    background: #1e3a8a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .date-meta {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+  }
+  .title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+  }
+  .title .red { color: #dc2626; }
+  .subtitle {
+    font-size: 14px;
+    color: #475569;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  /* KPI Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 18px 0;
+  }
+  .kpi-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    border-top: 4px solid #1e3a8a;
+  }
+  .kpi-card.alert {
+    border-top-color: #dc2626;
+    background: #fef2f2;
+  }
+  .kpi-card.warn {
+    border-top-color: #ea580c;
+    background: #fff7ed;
+  }
+  .kpi-card.blue {
+    border-top-color: #2563eb;
+    background: #eff6ff;
+  }
+  .kpi-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+  .kpi-val {
+    font-size: 25px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+  .kpi-card.alert .kpi-val { color: #dc2626; }
+  .kpi-card.warn .kpi-val { color: #c2410c; }
+  .kpi-card.blue .kpi-val { color: #1d4ed8; }
+  .kpi-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  /* Visual Panels Grid */
+  .visual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex-grow: 1;
+  }
+  .panel {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .panel-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .panel-unit {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  /* Table Style */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th, .data-table td {
+    padding: 7px 10px;
+    text-align: right;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .data-table th {
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 700;
+    text-align: center;
+  }
+  .data-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+  }
+  .data-table tr.highlight {
+    background: #fef2f2;
+    font-weight: 700;
+  }
+  .val-down { color: #dc2626; font-weight: 700; }
+  .val-up { color: #2563eb; font-weight: 700; }
+
+  /* Chart Rows */
+  .chart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+  .chart-label {
+    width: 80px;
+    font-weight: 700;
+    color: #334155;
+  }
+  .chart-bar-bg {
+    flex-grow: 1;
+    background: #f1f5f9;
+    height: 18px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 10px;
+  }
+  .chart-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .chart-bar-fill.red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+  .chart-bar-fill.orange { background: linear-gradient(90deg, #f97316, #ea580c); }
+  .chart-bar-fill.blue { background: #3b82f6; }
+  .chart-bar-fill.slate { background: #94a3b8; }
+  .chart-num {
+    width: 50px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 13.5px;
+  }
+
+  /* Gauge Component */
+  .gauge-container {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 10px;
+  }
+  .gauge-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .gauge-bar-outer {
+    height: 14px;
+    background: #e2e8f0;
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    color: #475569;
+  }
+  .footer-insight {
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-source {
+    color: #94a3b8;
+    font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <span class="badge">INFOGRAPHIC | 고용 동향 심층 분석</span>
+      <span class="date-meta">2026년 11월 기준 | 국가데이터처 부가조사</span>
+    </div>
+    <div class="title">
+      부산 정규직 <span class="red">2.2만개 증발</span>… 2030 청년 ‘쉬었음’ 1위는 “원하는 일자리 없어서”
+    </div>
+    <div class="subtitle">
+      정규직 감소율 전국 최고 수준(-2.65%) vs 비정규직 비중 41.7% 급등… 청년 일자리 질적 악화가 낳은 구직 단념 사태
+    </div>
+  </div>
+
+  <!-- KPI Cards (4) -->
+  <div class="kpi-grid">
+    <div class="kpi-card alert">
+      <div class="kpi-label">부산 정규직 증감</div>
+      <div class="kpi-val">▼ 22,000명</div>
+      <div class="kpi-sub">83.0만 → 80.8만명 (감소율 -2.65%)</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-label">부산 비정규직 비중</div>
+      <div class="kpi-val">41.7%</div>
+      <div class="kpi-sub">전년比 +1.7%p (전국 평균 38.5% 상회)</div>
+    </div>
+    <div class="kpi-card alert">
+      <div class="kpi-label">청년(15~29세) 쉰 사유 1위</div>
+      <div class="kpi-val">35.2%</div>
+      <div class="kpi-sub">"원하는 일자리 없음" 압도적 1위</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">취업·창업 희망 비율</div>
+      <div class="kpi-val">19.9%</div>
+      <div class="kpi-sub">5년 연속 하락, 20% 선 붕괴</div>
+    </div>
+  </div>
+
+  <!-- Visual Panels (2 Columns) -->
+  <div class="visual-grid">
+    
+    <!-- Left: Data Table -->
+    <div class="panel">
+      <div>
+        <div class="panel-header">
+          <span class="panel-title">📊 부산 임금근로자 고용형태별 변화 추이</span>
+          <span class="panel-unit">(단위: 천명, %, %p)</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>구 분</th>
+              <th>2025. 8.</th>
+              <th>2026. 8.</th>
+              <th>증 감</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>임금근로자 총계</td>
+              <td>1,383</td>
+              <td>1,386</td>
+              <td class="val-up">+3 (+0.2%)</td>
+            </tr>
+            <tr class="highlight">
+              <td>• 정규직 근로자</td>
+              <td>830</td>
+              <td>808</td>
+              <td class="val-down">-22 (-2.65%)</td>
+            </tr>
+            <tr>
+              <td>• 비정규직 근로자</td>
+              <td>553</td>
+              <td>578</td>
+              <td class="val-up">+25 (+4.52%)</td>
+            </tr>
+            <tr style="background:#f8fafc; font-weight:700;">
+              <td>비정규직 비중(%)</td>
+              <td>40.0%</td>
+              <td>41.7%</td>
+              <td class="val-down">+1.7%p</td>
+            </tr>
+            <tr style="color:#64748b; font-size:12px;">
+              <td>(전국 평균 비중)</td>
+              <td>38.2%</td>
+              <td>38.5%</td>
+              <td>+0.3%p</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:11.5px; color:#64748b; line-height:1.4; margin-top:8px;">
+        * 부산의 정규직 감소 규모(-2.2만명)는 서울(-2.4만명)에 이어 전국 2위이며, 감소율은 광역시 중 가장 가파릅니다.
+      </div>
+    </div>
+
+    <!-- Right: Charts & Gauges -->
+    <div class="panel">
+      <div>
+        <div class="panel-header">
+          <span class="panel-title">📈 연령별 ‘원하는 일자리 없음’으로 일을 쉰 비율</span>
+          <span class="panel-unit">(단위: %)</span>
+        </div>
+        <div class="chart-list">
+          <div class="chart-row">
+            <span class="chart-label">15~29세</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill red" style="width: 70.4%;"></div>
+            </div>
+            <span class="chart-num" style="color:#dc2626;">35.2%</span>
+          </div>
+          <div class="chart-row">
+            <span class="chart-label">30대</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill orange" style="width: 64.6%;"></div>
+            </div>
+            <span class="chart-num" style="color:#ea580c;">32.3%</span>
+          </div>
+          <div class="chart-row">
+            <span class="chart-label">40대</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill blue" style="width: 47.8%;"></div>
+            </div>
+            <span class="chart-num">23.9%</span>
+          </div>
+          <div class="chart-row">
+            <span class="chart-label">50대</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill slate" style="width: 31.4%;"></div>
+            </div>
+            <span class="chart-num">15.7%</span>
+          </div>
+          <div class="chart-row">
+            <span class="chart-label">60세이상</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill slate" style="width: 20.4%;"></div>
+            </div>
+            <span class="chart-num">10.2%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gauge Comparison -->
+      <div class="gauge-container">
+        <div class="gauge-head">
+          <span>전국 비정규직 비중: 38.5%</span>
+          <span style="color:#dc2626;">부산광역시: 41.7% (+3.2%p 격차)</span>
+        </div>
+        <div class="gauge-bar-outer">
+          <div style="height:100%; width:83.4%; background:#3b82f6;"></div>
+          <div style="height:100%; width:16.6%; background:#ef4444;"></div>
+        </div>
+        <div style="font-size:11.5px; color:#475569; margin-top:4px;">
+          50대(48.8%)·60대 이상(38.3%)의 주된 쉰 이유는 <strong>'건강 악화'</strong>인 반면, 2030 청년층은 <strong>'일자리 부족'</strong>이 1위입니다.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-insight">
+      💡 핵심 진단: 청년 유출과 구직 단념은 ‘눈높이 탓’이 아닌, 양질의 정규직 일자리가 사라지는 구조적 위기 때문입니다.
+    </div>
+    <div class="source-source">
+      출처: 국가데이터처 2026년 8월 근로형태별 및 비경제활동인구 부가조사 결과
+    </div>
+  </div>
+
+</body>
+</html>
